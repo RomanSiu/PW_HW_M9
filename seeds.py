@@ -10,8 +10,8 @@ def authors_handle():
 
     for a in authors:
         date = datetime.strptime(a["born_date"], "%B %d, %Y")
-        author = Author(fullname=a["fullname"], born_date=date, born_location=a["born_location"]
-                        , description=a["description"]).save()
+        Author(fullname=a["fullname"], born_date=date, born_location=a["born_location"],
+               description=a["description"]).save()
 
 
 def quotes_handle():
@@ -19,8 +19,8 @@ def quotes_handle():
         quotes = json.load(fh)
 
     for q in quotes:
-        author_ref = Author.objects(fullname__icontains=q["author"])
-        quote = Quote(tags=q["tags"], author=author_ref[0], quote=q["quote"]).save()
+        author_ref = Author.objects(fullname=q["author"])
+        Quote(tags=q["tags"], author=author_ref[0], quote=q["quote"]).save()
 
 
 if __name__ == "__main__":

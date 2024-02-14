@@ -11,6 +11,7 @@ redis-lru = "*"
 beautifulsoup4 = "*"
 requests = "*"
 lxml = "*"
+rabbitmq-spider = "*"
 
 [dev-packages]
 

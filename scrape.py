@@ -15,15 +15,16 @@ def parse_cards(link):
     soup = BeautifulSoup(link.text, "lxml")
     quotes = soup.find_all("div", class_="quote")
     for quote_card in quotes:
-        quote = quote_card.find("span", class_="text")
-        author = quote_card.find("small", class_="author")
+        quote = quote_card.find("span", class_="text").text
+        author = quote_card.find("small", class_="author").text
+        author = author.replace("-", " ")
         tags_lst = quote_card.find_all("a", class_="tag")
         tags = []
         for tag in tags_lst:
             tags.append(tag.text)
-        quote_dict = {"tags": tags, "author": author.text, "quote": quote.text}
+        quote_dict = {"tags": tags, "author": author, "quote": quote}
         quotes_lst.append(quote_dict)
-        if author.text not in authors_rdy:
+        if author not in authors_rdy:
             link = quote_card.find("a")
             parse_author(f"{domain}{link['href']}")
 
@@ -31,19 +32,20 @@ def parse_cards(link):
 def parse_author(link):
     response = requests.get(link)
     soup = BeautifulSoup(response.text, "lxml")
-    name = soup.find("h3", class_="author-title")
-    born_date = soup.find("span", class_="author-born-date")
-    born_loc = soup.find("span", class_="author-born-location")
+    name = soup.find("h3", class_="author-title").text
+    name = name.replace("-", " ")
+    born_date = soup.find("span", class_="author-born-date").text
+    born_loc = soup.find("span", class_="author-born-location").text
     description = soup.find("div", class_="author-description")
     description = description.text.strip()
     pos = re.search("(More: http)", description)
     if pos:
-        author = {"fullname": name.text, "born_date": born_date.text, "born_location": born_loc.text,
+        author = {"fullname": name, "born_date": born_date, "born_location": born_loc,
                   "description": description[:pos.span()[0]]}
     else:
-        author = {"fullname": name.text, "born_date": born_date.text, "born_location": born_loc.text,
+        author = {"fullname": name, "born_date": born_date, "born_location": born_loc,
                   "description": description}
-    authors_rdy.append(name.text)
+    authors_rdy.append(name)
     authors.append(author)
 
 
